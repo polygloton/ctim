@@ -61,32 +61,32 @@
    merge-entities
    (gen/tuple (seg/generator BaseStoredBundle leaf-generators)
               (gen-id/gen-short-id-of-type :bundle)
-              (maybe (gen/vector gen-actor))
-              (maybe (gen/vector gen-campaign))
-              (maybe (gen/vector gen-coa))
-              (maybe (gen/vector gen-exploit-target))
-              (maybe (gen/vector gen-feedback))
-              (maybe (gen/vector gen-incident))
-              (maybe (gen/vector gen-indicator))
-              (maybe (gen/vector gen-judgement))
-              (maybe (gen/vector gen-sighting))
-              (maybe (gen/vector gen-ttp)))))
+              (maybe (gen/vector gen-actor 0 1))
+              (maybe (gen/vector gen-campaign 0 1))
+              (maybe (gen/vector gen-coa 0 1))
+              (maybe (gen/vector gen-exploit-target 0 1))
+              (maybe (gen/vector gen-feedback 0 1))
+              (maybe (gen/vector gen-incident 0 1))
+              (maybe (gen/vector gen-indicator 0 1))
+              (maybe (gen/vector gen-judgement 0 1))
+              (maybe (gen/vector gen-sighting 0 1))
+              (maybe (gen/vector gen-ttp 0 1)))))
 
 (defn gen-new-bundle_ [gen-id]
   (gen/fmap
    merge-entities
    (gen/tuple (seg/generator BaseNewBundle leaf-generators)
               gen-id
-              (maybe (gen/vector gen-actor))
-              (maybe (gen/vector gen-campaign))
-              (maybe (gen/vector gen-coa))
-              (maybe (gen/vector gen-exploit-target))
-              (maybe (gen/vector gen-feedback))
-              (maybe (gen/vector gen-incident))
-              (maybe (gen/vector gen-indicator))
-              (maybe (gen/vector gen-judgement))
-              (maybe (gen/vector gen-sighting))
-              (maybe (gen/vector gen-ttp)))))
+              (maybe (gen/vector gen-actor 0 1))
+              (maybe (gen/vector gen-campaign 0 1))
+              (maybe (gen/vector gen-coa 0 1))
+              (maybe (gen/vector gen-exploit-target 0 1))
+              (maybe (gen/vector gen-feedback 0 1))
+              (maybe (gen/vector gen-incident 0 1))
+              (maybe (gen/vector gen-indicator 0 1))
+              (maybe (gen/vector gen-judgement 0 1))
+              (maybe (gen/vector gen-sighting 0 1))
+              (maybe (gen/vector gen-ttp 0 1)))))
 
 (def gen-new-bundle
   (gen-new-bundle_
