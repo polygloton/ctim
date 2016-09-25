@@ -7,6 +7,7 @@
              :refer [complete leaf-generators maybe]
              :as common]
             [ctim.generators.id :as gen-id]
+            [flanders.schema :refer [->schema-tree]]
             [schema-generators.generators :as seg]))
 
 (def gen-judgement
@@ -16,7 +17,7 @@
             :id id
             :disposition disp
             :disposition_name (get schemas-common/disposition-map disp)))
-   (gen/tuple (seg/generator StoredJudgement leaf-generators)
+   (gen/tuple (seg/generator  (->schema-tree StoredJudgement) leaf-generators)
               (gen-id/gen-short-id-of-type :judgement)
               (gen/choose 1 5))))
 
@@ -36,7 +37,7 @@
        start-time (assoc-in [:valid_time :start_time] start-time)
        end-time (assoc-in [:valid_time :end_time] end-time)))
    (gen/tuple
-    (seg/generator NewJudgement leaf-generators)
+    (seg/generator (->schema-tree NewJudgement) leaf-generators)
     gen-id
     (gen/tuple (gen/choose 1 5)
                gen/boolean

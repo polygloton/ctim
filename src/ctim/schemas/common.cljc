@@ -1,6 +1,7 @@
 (ns ctim.schemas.common
   (:require [ctim.lib.schema :refer [describe]]
             [ctim.schemas.vocabularies :as v]
+            [flanders.core :as f]
             [schema-tools.core :as st]
             [schema.core :as s]
             [clojure.set :refer [map-invert]]))
@@ -11,17 +12,29 @@
   "An entity ID, or a URI referring to a remote one."
   s/Str)
 
+(def Reference-NEW
+  (f/str :description "An entity ID, or a URI referring to a remote one"))
+
 (def ID
   "A string uniquely identifying an entity."
   s/Str)
+
+(def ID-NEW
+  (f/str :description "A string uniquely identifying an entity."))
 
 (def URI
   "A URI."
   s/Str)
 
+(def URI-NEW
+  (f/str :description "A URI"))
+
 (def Time
   "Schema definition for all date or timestamp values in GUNDAM."
   s/Inst)
+
+(def Time-NEW
+  (f/inst :description "Schema definition for all date or timestamp values in GUNDAM."))
 
 (def Markdown
   "Markdown text"
@@ -35,6 +48,13 @@
 
 (def default-tlp "green")
 
+(def TLP-NEW
+  (f/enum #{"red" "amber" "green" "white"}
+          :default "green"))
+
+(def default-tlp-NEW
+  (:default TLP-NEW))
+
 (s/defschema BaseEntity
   {;; :id and :idref must be implemented exclusively
    :id ID
@@ -47,6 +67,21 @@
    (s/optional-key :language) s/Str
    (s/optional-key :tlp) TLP})
 
+(def base-entity-entries
+  (concat
+   (f/required-entries
+    (f/entry :id ID-NEW)
+    (f/entry :type f/any-str)
+    (f/entry :schema_version (f/eq ctim-schema-version)
+             :description "CTIM schema version for this entity"))
+   (f/optional-entries
+    (f/entry :uri URI-NEW)
+    (f/entry :revision f/any-int)
+    (f/entry :external_ids f/any-string-seq)
+    (f/entry :timestamp Time-NEW)
+    (f/entry :language f/any-str)
+    (f/entry :tlp TLP-NEW))))
+
 (s/defschema NewBaseEntity
   "Base for New Entities, optionalizes ID and type and schema_version"
   (st/merge
@@ -55,6 +90,16 @@
     {:id ID
      :type (describe s/Str "A valid entity type identifer")
      :schema_version (describe (s/enum ctim-schema-version) "CTIM schema version for this entity")})))
+
+(def base-new-entity-entries
+  (concat
+   base-entity-entries
+   (f/optional-entries
+    (f/entry :id ID-NEW)
+    (f/entry :type f/any-str
+             :description "A valid entity type identifer")
+    (f/entry :schema_version (f/eq ctim-schema-version)
+             :description "CTIM schema version for this entity"))))
 
 (s/defschema DescribableEntity
   "These fields for decribable entities"
@@ -67,6 +112,10 @@
   "An object that must have a source"
   {:source s/Str
    (s/optional-key :source_uri) URI})
+
+(def sourced-object-NEW
+  [(f/entry :source_uri URI-NEW
+            :required? false)])
 
 (s/defschema SourcableObject
   "An object that MAY have a source"
@@ -168,6 +217,10 @@
   {:value s/Str
    :type v/ObservableTypeIdentifier})
 
+(def observable-NEW
+  (f/map [(f/entry :value f/any-str)
+          (f/entry :type (f/enum v/observable-type-identifier-NEW))]))
+
 (s/defschema ValidTime
   "See http://stixproject.github.io/data-model/1.2/indicator/ValidTimeType/"
   {(s/optional-key :start_time)
@@ -177,6 +230,16 @@
    (s/optional-key :end_time)
    (describe Time
              "If not present, the valid time position of the indicator does not have an upper bound")})
+
+(def ValidTime-NEW
+  (f/map
+   (f/optional-entries
+    (f/entry :start_time Time-NEW
+             :description (str "If not present, the valid time position of the "
+                               "indicator does not have an upper bound"))
+    (f/entry :end_time Time-NEW
+             :description (str "If not present, the valid time position of the "
+                               "indicator does not have an upper bound")))))
 
 (s/defschema ObservedTime
   "See http://stixproject.github.io/data-model/1.2/indicator/ValidTimeType/"
@@ -204,9 +267,16 @@
   "Numeric verdict identifiers"
   (apply s/enum (keys disposition-map)))
 
+(def DispositionNumber-NEW
+  "Numeric verdict identifiers"
+  (f/enum (keys disposition-map)))
+
 (def DispositionName
   "String verdict identifiers"
-  (apply s/enum (vals disposition-map)))
+  (apply s/enum (set (vals disposition-map))))
+
+(def DispositionName-NEW
+  (f/enum (set (vals disposition-map))))
 
 (s/defschema HttpParams
   "HTTP Parameters. TODO: Presuming either keyword or string keys for now."
@@ -387,11 +457,18 @@
                     {:type ::disposition-missing
                      :judgement judgement}))))
 
-
 (s/defschema BaseStoredEntity
   {:owner s/Str
    :created Time
    (s/optional-key :modified) Time})
+
+(def base-stored-entity-entries
+  (concat
+   (f/required-entries
+    (f/entry :owner f/any-str)
+    (f/entry :created Time-NEW))
+   (f/optional-entries
+    (f/entry :modified Time-NEW))))
 
 
 (defn stored-schema

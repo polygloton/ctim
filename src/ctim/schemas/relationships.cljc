@@ -1,5 +1,6 @@
 (ns ctim.schemas.relationships
-  (:require [ctim.schemas.common :as c]
+  (:require [flanders.core :as f]
+            [ctim.schemas.common :as c]
             [ctim.schemas.vocabularies :as v]
             [schema-tools.core :as st]
             [schema.core :as s]))
@@ -11,6 +12,7 @@
 (def FeedbackReference c/Reference)
 (def IncidentReference c/Reference)
 (def IndicatorReference c/Reference)
+(def IndicatorReference-NEW c/Reference-NEW)
 (def JudgementReference c/Reference)
 (def SightingReference c/Reference)
 (def TTPReference c/Reference)
@@ -29,6 +31,15 @@
 
 (s/defschema RelatedIndicators
   [RelatedIndicator])
+
+(def related-indicators-NEW
+  (f/map-of {:description "Related Indicators"}
+            (f/required-entries
+             (f/entry :indicator_id IndicatorReference-NEW))
+            (f/optional-entries
+             (f/entry :confidence (f/enum v/HighMedLow-NEW))
+             (f/entry :source f/any-str)
+             (f/entry :relationship f/any-str))))
 
 (s/defschema RelatedActors
   [(enriched-ref {:actor_id ActorReference})])
