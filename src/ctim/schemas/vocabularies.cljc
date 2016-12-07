@@ -527,7 +527,10 @@
     "uses"
     "variant-of"})
 
+
 (def RelationshipType
-  (f/enum relationship-type
-          :open? true
-          :gen (cs/gen relationship-type)))
+  #?(:clj (f/enum relationship-type
+                  :open? true
+                  :gen (cs/gen relationship-type))
+     :cljs (f/enum relationship-type
+                   :open? true)))
