@@ -1,5 +1,6 @@
 (ns ctim.schemas.vocabularies
-  (:require [clojure.spec :as cs]
+  (:require #?(:clj  [clojure.spec :as cs]
+               :cljs [cljs.spec :as cs])
             [flanders.core :as f]))
 
 (def attack-infrastructure
